@@ -5,7 +5,7 @@ export class AppRoutes {
 
   static get routes():Router {
     const router = Router();
-    router.use('/api/generate', ChatRoutes.routes);
+    router.use('/api/chat', ChatRoutes.routes);
     return router
   }
 }

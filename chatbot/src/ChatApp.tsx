@@ -1,6 +1,58 @@
 import { IconMessage, IconPlus, IconSend2 } from "@tabler/icons-react"
+import { useRef, useState } from "react"
+import { Message, PropsResponse } from "./interfaces/interfaces"
 
 function ChatApp() {
+
+  const [model, setModel] = useState("llama3")
+  
+  const ROLE_USER = 'user'
+  const formRef = useRef<HTMLFormElement>(null)
+  const [message, setMessage] = useState<Message>({content: '', role: ''})
+  const [chatRecord, setChatRecord] = useState<Message[]>([])
+
+
+  const options = {
+    "model": model,
+    "messages": [
+      {
+        "role": ROLE_USER,
+        "content": "Can you show an example of axios?"
+      }
+    ]
+  }
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const formData = new FormData(formRef.current!)
+    const valueMessage = formData.get('message')
+
+    console.log(valueMessage)
+    
+    const resp:PropsResponse = await fetch('http://localhost:3000/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(options)
+    }).then((res) => res.json())
+
+    setMessage(resp.message)
+    setChatRecord([
+      ...chatRecord,
+      {
+        role: ROLE_USER,
+        content: "sfsdfsdfsdf"
+      },
+      {
+        role: resp.message?.role,
+        content: message?.content
+      },
+    ])
+  }
+
+  console.log(chatRecord)
 
   return (
     <div
@@ -38,8 +90,10 @@ function ChatApp() {
           <select
             name="" id=""
             className="p-3 bg-[#242424] focus-within:outline-none text-lg"
+            onChange={(e) => setModel(e.target.value)}
           >
-            <option value="model">model</option>
+            <option value="llama3">llama3</option>
+            <option value="mistral">mistral</option>
           </select>
         </header>
         <div className="mx-auto max-w-3xl flex flex-col h-[calc(100%-120px)]">
@@ -50,10 +104,14 @@ function ChatApp() {
           </div>
           <form
             className="bg-gray-800 px-6 py-4 rounded-full"
+            onSubmit={onSubmit}
+            ref={formRef}
           >
             <fieldset className="flex items-center">
               <input
                 type="text"
+                name="message"
+                placeholder="Escribe tu petición..."
                 className="flex-1 bg-gray-800 focus-visible:outline-none text-lg"
               />
               <div className="flex items-center">
