@@ -1,18 +1,19 @@
 export interface PropsResponse {
-  model:                string;
-  created_at:           Date;
-  message:              Message;
-  done_reason:          string;
-  done:                 boolean;
-  total_duration:       number;
-  load_duration:        number;
-  prompt_eval_count:    number;
-  prompt_eval_duration: number;
-  eval_count:           number;
-  eval_duration:        number;
+  prompt: string;
+  history: History[];
 }
 
-export interface Message {
-  role:    string;
-  content: string;
+export interface History {
+  role:  string;
+  parts: Part[];
+}
+
+export interface Part {
+  text: string;
+}
+
+export interface StorageChatProps {
+  id: string;
+  title: string;
+  history: History[]
 }

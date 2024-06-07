@@ -1,36 +1,51 @@
+import { useEffect, useRef, useState } from "react"
 import { IconMessage, IconPlus, IconSend2 } from "@tabler/icons-react"
-import { useRef, useState } from "react"
-import { Message, PropsResponse } from "./interfaces/interfaces"
+
+import { History, PropsResponse, StorageChatProps } from "./interfaces/interfaces"
+import { initState } from "./data"
 
 function ChatApp() {
 
-  const [model, setModel] = useState("llama3")
-  
-  const ROLE_USER = 'user'
   const formRef = useRef<HTMLFormElement>(null)
-  const [message, setMessage] = useState<Message>({content: '', role: ''})
-  const [chatRecord, setChatRecord] = useState<Message[]>([])
+  const [ value , setValue ] = useState<string>('')
+  const [ message, setMessage ] = useState<History[]>([])
 
+  const [ storageChats, setStorageChats ] = useState<StorageChatProps[]>(initState || [])
+  const [ activeChat, setActiveChat ] = useState<StorageChatProps>({} as StorageChatProps)
+  const [ valuesFromStorage, setValuesFromStorage ] = useState<{title: string, id: string}[]>([])
 
-  const options = {
-    "model": model,
-    "messages": [
-      {
-        "role": ROLE_USER,
-        "content": "Can you show an example of axios?"
-      }
-    ]
+  const onSetActiveChat = (id: string) => {
+    const chat = storageChats.find(chat => chat.id === id)
+    if(chat) {
+      setActiveChat(chat)
+      setMessage(chat.history)
+    }
+  }
+
+  const newChat = () => {
+    if(message.length > 0) {
+      setStorageChats(
+        [...storageChats,
+          { id: crypto.randomUUID(),
+            title: message[0].parts[0].text || value,
+            history: message }
+        ]
+      )
+    }
+    setMessage([])
+    setActiveChat({} as StorageChatProps)
+    setValue('')
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const formData = new FormData(formRef.current!)
-    const valueMessage = formData.get('message')
-
-    console.log(valueMessage)
+    const options:PropsResponse = {
+      prompt: value!,
+      history: message
+    }
     
-    const resp:PropsResponse = await fetch('http://localhost:3000/api/chat', {
+    const { history }:PropsResponse = await fetch('http://localhost:3000/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -38,21 +53,25 @@ function ChatApp() {
       body: JSON.stringify(options)
     }).then((res) => res.json())
 
-    setMessage(resp.message)
-    setChatRecord([
-      ...chatRecord,
-      {
-        role: ROLE_USER,
-        content: "sfsdfsdfsdf"
-      },
-      {
-        role: resp.message?.role,
-        content: message?.content
-      },
-    ])
+    setMessage([...history])
+    if(activeChat.id !== undefined) {
+      console.log("update chat")
+      activeChat.history = history
+    }
   }
 
-  console.log(chatRecord)
+  useEffect(() => {
+    const mapValuesFromStorage = storageChats?.map((chat) => {
+      return {
+        id: chat.id!,
+        title: chat.title!
+      }
+    })
+    setValuesFromStorage(mapValuesFromStorage)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[storageChats])
+
+  console.log({message, activeChat, storageChats})
 
   return (
     <div
@@ -62,7 +81,10 @@ function ChatApp() {
         className="bg-gray-800 min-h-dvh w-[330px] py-8 px-4"
       >
         <div>
-          <button className="flex bg-gray-700 p-4 rounded-full w-full justify-center gap-4">
+          <button
+            className="flex bg-gray-700 p-4 rounded-full w-full justify-center gap-4"
+            onClick={newChat}
+          >
             <IconPlus />
             <p>Nueva conversación</p>
           </button>
@@ -73,18 +95,24 @@ function ChatApp() {
           </header>
           <ul>
             <li>
-              <button
-                className="flex p-4 gap-4 flex-wrap items-center bg-transparent hover:bg-gray-700 rounded-full"
-              >
-                <IconMessage size={20} />
-                <p className="line-clamp-1 w-[calc(100%-60px)]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia sed neque quos consequuntur delectus totam quibusdam quis blanditiis assumenda, quae quia adipisci ipsam quaerat nam odio nesciunt. Vitae, maxime facere.</p>
-              </button>
+              {
+                valuesFromStorage.map((val) => (
+                  <button
+                    className="flex p-4 gap-4 flex-wrap items-center bg-transparent hover:bg-gray-700 rounded-full w-full"
+                    key={val.id}
+                    onClick={() => onSetActiveChat(val.id)}
+                  >
+                    <IconMessage size={20} />
+                    <p className="line-clamp-1 w-[calc(100%-60px)] text-left">{val.title}</p>
+                  </button>
+                ))
+              }
             </li>
           </ul>
         </div>
       </aside>
       <main className="min-h-dvh w-[calc(100%-330px)]">
-        <header
+        {/* <header
           className="p-4 text-white"
         >
           <select
@@ -95,12 +123,34 @@ function ChatApp() {
             <option value="llama3">llama3</option>
             <option value="mistral">mistral</option>
           </select>
-        </header>
-        <div className="mx-auto max-w-3xl flex flex-col h-[calc(100%-120px)]">
+        </header> */}
+        <div className="mx-auto max-w-3xl flex flex-col h-[calc(100%-50px)] py-8">
           <div
-            className="flex-1"
-          >
-            Hola
+            className="flex-1 space-y-4"
+          > 
+            {message.map((chat, index) => (
+                  chat.role === "model"
+                  ? (
+                    <div
+                      key={index}
+                      className="bg-sky-950 p-4 rounded-lg"
+                    >
+                      {chat.role}
+                      <p>{chat.parts.map((part) => part.text)}</p>
+                    </div>
+                  )
+                  : (
+                    <div
+                      key={index}
+                      className="p-4 rounded-lg bg-cyan-950"
+                    >
+                      {chat.role}
+                      <p>{chat.parts.map((part) => part.text)}</p>
+                    </div>
+                  )
+                )
+              )
+            }
           </div>
           <form
             className="bg-gray-800 px-6 py-4 rounded-full"
@@ -113,6 +163,8 @@ function ChatApp() {
                 name="message"
                 placeholder="Escribe tu petición..."
                 className="flex-1 bg-gray-800 focus-visible:outline-none text-lg"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
               />
               <div className="flex items-center">
                 <button>

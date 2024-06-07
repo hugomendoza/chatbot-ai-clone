@@ -10,7 +10,10 @@ export class ChatController {
 
     const { body } = req
 
-    this.chatService.generateResponse( body )
+    this.chatService.generateResponse({
+      prompt: body.prompt,
+      history: body.history
+    })
       .then((response) => {res.send(response)})
       .catch((error) => {res.send(error)})
   }
