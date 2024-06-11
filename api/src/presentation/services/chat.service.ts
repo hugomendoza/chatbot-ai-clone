@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ChatRequest, GeminiResponse } from "../../domain/interfaces";
+import {  GeminiResponse } from "../../domain/interfaces";
 import { envs } from "../../config/envs";
 
 const genAI = new GoogleGenerativeAI(envs.GEMINI_API_KEY as string)
