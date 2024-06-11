@@ -17,7 +17,7 @@ export const initState: StorageChatProps[] = [
   },
   {
     id: "456",
-    title: "Mi segundo chat",
+    title: "Mi segundo chat dfgslñjvsdakjfgkl asdkljgfdsklñfgjdklf",
     history: [
       {
           "role": "user",
