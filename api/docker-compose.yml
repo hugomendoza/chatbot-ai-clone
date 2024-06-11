@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  app:
+    container_name: api-gemini-from-docker-hub
+    image: hugomendoza/api-gemini-v2:latest
+    ports:
+      - 3000:3000
+    environment:
+      PORT: 3000
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
