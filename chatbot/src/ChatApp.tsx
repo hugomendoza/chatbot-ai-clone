@@ -51,6 +51,8 @@ function ChatApp() {
     })
 
     if(!response) return false
+
+    if(!response) return false
     const { history } = response!
 
     setMessage([...history])
