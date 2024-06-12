@@ -9,4 +9,8 @@ export class CustomError extends Error {
   static badRequest(message: string) {
     return new CustomError(400, message)
   }
+
+  static internalServer(message:string) {
+    return new CustomError(500, message)
+  }
 }

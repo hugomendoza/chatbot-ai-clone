@@ -17,7 +17,7 @@ export class ChatController {
   }
 
   generate = (req:Request, res:Response) => {
-    const [ error, chatResponseDto] = ChatResponseDto.create({
+    const [ error, chatResponseDto ] = ChatResponseDto.create({
       ...req.body
     })
 

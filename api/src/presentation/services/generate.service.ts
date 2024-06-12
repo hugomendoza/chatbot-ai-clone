@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 
 import { envs } from "../../config/envs";
+import { CustomError } from "../../domain/errors/custom.error";
 
 export class GenerateService {
 
@@ -21,7 +22,7 @@ export class GenerateService {
       })
       return data
     } catch (error) {
-      console.log(error)
+      throw CustomError.internalServer('Internal server error')
     }
   }
 }

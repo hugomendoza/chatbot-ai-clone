@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import {  GeminiResponse } from "../../domain/interfaces";
 import { envs } from "../../config/envs";
+import { CustomError } from "../../domain/errors/custom.error";
 
 const genAI = new GoogleGenerativeAI(envs.GEMINI_API_KEY as string)
 
@@ -26,7 +27,7 @@ export class ChatService {
         history: chat.params?.history
       }
     } catch (error) {
-      console.log(error)
+      throw CustomError.internalServer('Internal server error')
     }
   }
 }
