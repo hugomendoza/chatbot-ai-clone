@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { IconMessage, IconPlus, IconSend2 } from "@tabler/icons-react"
 
-import { History, StorageChatProps } from "./interfaces/interfaces"
-import { initState } from "./data"
-import { Button, ButtonHistory, CardMessage } from "./components"
+import { History, StorageChatProps } from "../interfaces/interfaces"
+
+import { Button, ButtonHistory, CardMessage } from "../components"
 import { Toaster } from "sonner"
-import { useCreateChat } from "./hooks/useCreateChat"
+import { useCreateChat } from "../hooks/useCreateChat"
 
 function ChatApp() {
 
@@ -15,7 +15,7 @@ function ChatApp() {
 
   const { generateChat } = useCreateChat()
 
-  const [ storageChats, setStorageChats ] = useState<StorageChatProps[]>(initState || [])
+  const [ storageChats, setStorageChats ] = useState<StorageChatProps[]>([])
   const [ activeChat, setActiveChat ] = useState<StorageChatProps>({} as StorageChatProps)
   const [ valuesFromStorage, setValuesFromStorage ] = useState<{title: string, id: string}[]>([])
 
