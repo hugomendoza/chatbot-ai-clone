@@ -17,3 +17,8 @@ export interface StorageChatProps {
   title: string;
   history: History[]
 }
+
+export interface ImageResponse {
+  revised_prompt: string;
+  url:            string;
+}

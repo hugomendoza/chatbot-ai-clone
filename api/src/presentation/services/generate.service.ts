@@ -17,10 +17,10 @@ export class GenerateService {
         model: "dall-e-3",
         n: 1,
         size: "1024x1024",
-        style: "natural",
+        style: "vivid",
         quality: "hd"
       })
-      return data
+      return data[0]
     } catch (error) {
       throw CustomError.internalServer('Internal server error')
     }
