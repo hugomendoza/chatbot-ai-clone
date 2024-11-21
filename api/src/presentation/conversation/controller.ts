@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { ChatService } from "../services/chat.service";
+import { ConversationService } from "../services/conversation.service";
 import { ChatResponseDto } from "../../domain/dtos/chat-response.dto";
 import { CustomError } from "../../domain/errors/custom.error";
 
-export class ChatController {
+export class ConversationController {
   constructor(
-    private readonly chatService: ChatService
+    private readonly chatService: ConversationService
   ){}
 
   private handleError = (error: unknown, res:Response) => {
@@ -17,14 +17,14 @@ export class ChatController {
   }
 
   generate = (req:Request, res:Response) => {
-    const [ error, chatResponseDto ] = ChatResponseDto.create({
-      ...req.body
-    })
+    // const [ error, chatResponseDto ] = ChatResponseDto.create({
+    //   ...req.body
+    // })
 
-    if (error) return res.status(400).send({ error })
+    // if (error) return res.status(400).send({ error })
 
-    this.chatService.generateResponse(chatResponseDto!)
-      .then((chat) => {res.status(201).json(chat)})
-      .catch(error => this.handleError(error, res))
+    // this.chatService.generateResponse(chatResponseDto!)
+    //   .then((chat) => {res.status(201).json(chat)})
+    //   .catch(error => this.handleError(error, res))
   }
 }
