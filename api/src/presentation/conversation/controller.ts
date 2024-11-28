@@ -26,5 +26,12 @@ export class ConversationController {
     // this.chatService.generateResponse(chatResponseDto!)
     //   .then((chat) => {res.status(201).json(chat)})
     //   .catch(error => this.handleError(error, res))
+
+    const { session_id } = req.body
+    this.chatService.saveMessage({
+      session_id: "12323333",
+      role: 'user',
+      content: 'hola'
+    }).then(() => res.status(201).json({ message: 'Message saved'}))
   }
 }

@@ -21,8 +21,8 @@ model Session {
 
 model Message {
   id Int @id @default(autoincrement())
-  session_id Int
+  session_id String
   role String
   content String
-  session Session @relation(fields: [session_id], references: [id])
+  session Session @relation(fields: [session_id], references: [session_id])
 }

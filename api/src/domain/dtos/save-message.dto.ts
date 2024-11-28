@@ -1,8 +1,8 @@
 export class SaveMessageDto {
   private constructor(
-    public session_id: String,
-    public role: String,
-    public content: String
+    public session_id: string,
+    public role: string,
+    public content: string
   ){}
 
   static create( object: {[ key: string]: any}): SaveMessageDto {

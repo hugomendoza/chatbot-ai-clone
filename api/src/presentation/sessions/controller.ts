@@ -8,7 +8,8 @@ export class SessionController {
   ){}
 
   createSession = async (req: Request, res: Response) => {
-    this.sessionService.createSession()
+    const { session_id } = req.body
+    this.sessionService.createSession(session_id)
       .then(() => res.status(201).json({ message: 'Session created'}))
   }
 }
